@@ -1,9 +1,6 @@
 """
 Backtracking Solver for N-Queens Puzzle.
-Unit II: Search & Optimization (CO2).
-
-Implements systematic Depth-First Search with constraint pruning
-and a configurable timeout to prevent hanging on large N.
+Systematic Depth-First Search with constraint pruning and timeout.
 """
 
 import time
@@ -19,22 +16,14 @@ def is_safe(board: List[int], row: int, col: int) -> bool:
     return True
 
 
-def solve_backtracking(n: int, timeout: float = 5.0) -> Dict[str, Any]:
+def solve_backtracking(
+    n: int,
+    timeout: float = 5.0,
+    record_history: bool = False,
+    max_history_frames: int = 150
+) -> Dict[str, Any]:
     """
-    Solve N-Queens using Backtracking with a hard timeout.
-
-    Parameters:
-        n (int): Board dimension (N x N) and queen count.
-        timeout (float): Max runtime in seconds before aborting.
-
-    Returns:
-        dict: {
-            "success": bool,
-            "board": Optional[List[int]],
-            "runtime": float (seconds),
-            "nodes_explored": int,
-            "timed_out": bool
-        }
+    Solve N-Queens using Backtracking with a hard timeout and optional state history.
     """
     if n in (2, 3):
         return {
@@ -42,29 +31,32 @@ def solve_backtracking(n: int, timeout: float = 5.0) -> Dict[str, Any]:
             "board": None,
             "runtime": 0.0,
             "nodes_explored": 0,
-            "timed_out": False
+            "timed_out": False,
+            "history": []
         }
 
     board = [-1] * n
     cols_used = [False] * n
-    diag1_used = [False] * (2 * n)  # row - col + (n - 1)
-    diag2_used = [False] * (2 * n)  # row + col
+    diag1_used = [False] * (2 * n)
+    diag2_used = [False] * (2 * n)
 
     nodes_explored = 0
     start_time = time.perf_counter()
     timed_out = False
+    history = []
 
     def backtrack(col: int) -> bool:
         nonlocal nodes_explored, timed_out
         nodes_explored += 1
 
-        # Periodic timeout check
         if nodes_explored % 4000 == 0:
             if time.perf_counter() - start_time > timeout:
                 timed_out = True
                 return False
 
         if col == n:
+            if record_history and len(history) < max_history_frames:
+                history.append(list(board))
             return True
 
         for row in range(n):
@@ -77,6 +69,9 @@ def solve_backtracking(n: int, timeout: float = 5.0) -> Dict[str, Any]:
                 diag1_used[d1] = True
                 diag2_used[d2] = True
 
+                if record_history and len(history) < max_history_frames:
+                    history.append(list(board))
+
                 if backtrack(col + 1):
                     return True
 
@@ -88,6 +83,9 @@ def solve_backtracking(n: int, timeout: float = 5.0) -> Dict[str, Any]:
                 diag1_used[d1] = False
                 diag2_used[d2] = False
 
+                if record_history and len(history) < max_history_frames:
+                    history.append(list(board))
+
         return False
 
     success = backtrack(0)
@@ -98,5 +96,6 @@ def solve_backtracking(n: int, timeout: float = 5.0) -> Dict[str, Any]:
         "board": list(board) if success else None,
         "runtime": elapsed,
         "nodes_explored": nodes_explored,
-        "timed_out": timed_out
+        "timed_out": timed_out,
+        "history": history
     }
