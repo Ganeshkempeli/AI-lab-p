@@ -20,7 +20,7 @@ def solve_backtracking(
     n: int,
     timeout: float = 5.0,
     record_history: bool = False,
-    max_history_frames: int = 150
+    max_history_frames: int = 200
 ) -> Dict[str, Any]:
     """
     Solve N-Queens using Backtracking with a hard timeout and optional state history.
@@ -45,6 +45,17 @@ def solve_backtracking(
     timed_out = False
     history = []
 
+    if record_history:
+        history.append({
+            "board": list(board),
+            "moved_col": -1,
+            "from_row": -1,
+            "to_row": -1,
+            "conflicts": 0,
+            "step": 0,
+            "desc": "Initial Empty Board"
+        })
+
     def backtrack(col: int) -> bool:
         nonlocal nodes_explored, timed_out
         nodes_explored += 1
@@ -56,7 +67,15 @@ def solve_backtracking(
 
         if col == n:
             if record_history and len(history) < max_history_frames:
-                history.append(list(board))
+                history.append({
+                    "board": list(board),
+                    "moved_col": col - 1,
+                    "from_row": -1,
+                    "to_row": board[col - 1],
+                    "conflicts": 0,
+                    "step": nodes_explored,
+                    "desc": "Goal State Reached (All Queens Placed)"
+                })
             return True
 
         for row in range(n):
@@ -70,7 +89,15 @@ def solve_backtracking(
                 diag2_used[d2] = True
 
                 if record_history and len(history) < max_history_frames:
-                    history.append(list(board))
+                    history.append({
+                        "board": list(board),
+                        "moved_col": col,
+                        "from_row": -1,
+                        "to_row": row,
+                        "conflicts": 0,
+                        "step": nodes_explored,
+                        "desc": f"Col {col}: Placed Queen at Row {row}"
+                    })
 
                 if backtrack(col + 1):
                     return True
@@ -84,7 +111,15 @@ def solve_backtracking(
                 diag2_used[d2] = False
 
                 if record_history and len(history) < max_history_frames:
-                    history.append(list(board))
+                    history.append({
+                        "board": list(board),
+                        "moved_col": col,
+                        "from_row": row,
+                        "to_row": -1,
+                        "conflicts": 0,
+                        "step": nodes_explored,
+                        "desc": f"Col {col}: Backtracked from Row {row}"
+                    })
 
         return False
 

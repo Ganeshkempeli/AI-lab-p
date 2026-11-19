@@ -1,6 +1,6 @@
 """
 N-Queens: Backtracking vs Hill Climbing
-Clean Interactive 2-Page Dashboard with Dynamic Queens.
+Clean Interactive Dashboard with Dedicated Dynamic Queen Prototype.
 """
 
 import time
@@ -26,7 +26,7 @@ st.set_page_config(
 st.markdown("""
 <style>
     .block-container {
-        padding-top: 1.2rem;
+        padding-top: 1.0rem;
         padding-bottom: 2rem;
     }
     .clean-header {
@@ -34,18 +34,18 @@ st.markdown("""
         padding: 1.2rem 1.6rem;
         border-radius: 10px;
         color: #F8FAFC;
-        margin-bottom: 1.2rem;
+        margin-bottom: 1.0rem;
         border: 1px solid #1E293B;
     }
     .clean-header h1 {
         margin: 0;
-        font-size: 1.8rem;
+        font-size: 1.75rem;
         font-weight: 700;
         color: #F8FAFC;
     }
     .metric-row {
         display: flex;
-        gap: 0.8rem;
+        gap: 0.7rem;
         margin-bottom: 0.8rem;
     }
     .mini-card {
@@ -53,20 +53,20 @@ st.markdown("""
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 8px;
-        padding: 0.6rem 0.8rem;
+        padding: 0.55rem 0.75rem;
         text-align: center;
         box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
     .mini-card-title {
         color: #64748B;
-        font-size: 0.72rem;
+        font-size: 0.70rem;
         text-transform: uppercase;
         font-weight: 700;
         letter-spacing: 0.5px;
     }
     .mini-card-val {
         color: #0F172A;
-        font-size: 1.25rem;
+        font-size: 1.20rem;
         font-weight: 700;
         margin-top: 0.15rem;
     }
@@ -80,14 +80,14 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 0.6rem 0;
+        margin: 0.5rem 0;
     }
     .board-grid {
         display: grid;
         border: 3px solid #0F172A;
-        border-radius: 4px;
+        border-radius: 6px;
         background-color: #0F172A;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
         overflow: hidden;
     }
     .board-cell {
@@ -109,6 +109,10 @@ st.markdown("""
     .tile-active {
         background: radial-gradient(circle, rgba(234,179,8,0.45) 0%, rgba(202,138,4,0.2) 100%);
     }
+    .tile-moved {
+        background: radial-gradient(circle, rgba(239,68,68,0.55) 0%, rgba(220,38,38,0.25) 100%) !important;
+        outline: 2px solid #DC2626;
+    }
     .speedup-pill {
         background: #ECFDF5;
         border: 1px solid #A7F3D0;
@@ -120,16 +124,27 @@ st.markdown("""
         margin-bottom: 0.8rem;
         text-align: center;
     }
+    .hud-box {
+        background: #F1F5F9;
+        border: 1px solid #CBD5E1;
+        border-radius: 8px;
+        padding: 0.8rem 1.2rem;
+        margin-bottom: 1.0rem;
+    }
+    .hud-metric {
+        font-size: 1.15rem;
+        font-weight: 700;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 
-def render_board(board: list, n: int, title: str = ""):
-    """Renders a responsive, interactive HTML chessboard with queen pieces."""
+def render_board(board: list, n: int, active_col: int = -1, title: str = ""):
+    """Renders a responsive, interactive HTML chessboard with queen pieces and active highlights."""
     if not board:
         return
 
-    cell_size = max(24, min(46, int(370 / n)))
+    cell_size = max(24, min(48, int(390 / n)))
     font_size = int(cell_size * 0.72)
 
     if title:
@@ -147,7 +162,15 @@ def render_board(board: list, n: int, title: str = ""):
             is_light = (r + c) % 2 == 0
             tile_cls = "tile-light" if is_light else "tile-dark"
             has_queen = (c < len(board) and board[c] == r)
-            active_cls = " tile-active" if has_queen else ""
+
+            if has_queen:
+                if c == active_col:
+                    active_cls = " tile-moved"
+                else:
+                    active_cls = " tile-active"
+            else:
+                active_cls = ""
+
             queen_symbol = f"<span class='queen-piece' style='font-size: {font_size}px;'>♛</span>" if has_queen else ""
             html += f"<div class='board-cell {tile_cls}{active_cls}' style='width:{cell_size}px; height:{cell_size}px;'>{queen_symbol}</div>"
 
@@ -155,21 +178,22 @@ def render_board(board: list, n: int, title: str = ""):
     st.markdown(html, unsafe_allow_html=True)
 
 
-# Clean Top Header (No theory, no badges, no problem statement)
+# Clean Header
 st.markdown("""
 <div class="clean-header">
     <h1>♛ N-Queens: Backtracking vs Hill Climbing</h1>
 </div>
 """, unsafe_allow_html=True)
 
-# Exactly 2 Clean Pages
-tab_solver, tab_benchmarks = st.tabs([
-    "♛ Live Solver (Dynamic Queens)",
+# Dedicated Navigation Tabs (Including dedicated Dynamic Prototype page)
+tab_solver, tab_prototype, tab_benchmarks = st.tabs([
+    "♛ Live Solver",
+    "🎬 Dynamic Queen Prototype",
     "📊 Performance Benchmark"
 ])
 
 # =============================================================================
-# PAGE 1: LIVE SOLVER (DYNAMIC QUEENS)
+# PAGE 1: LIVE SOLVER
 # =============================================================================
 with tab_solver:
     col_n, col_presets, col_btn = st.columns([1.5, 2.5, 1.2])
@@ -180,31 +204,29 @@ with tab_solver:
     with col_presets:
         st.write("")
         p1, p2, p3, p4 = st.columns(4)
-        if p1.button("N = 4", use_container_width=True):
+        if p1.button("N = 4", key="p1_4", use_container_width=True):
             n_input = 4
-        if p2.button("N = 8", use_container_width=True):
+        if p2.button("N = 8", key="p1_8", use_container_width=True):
             n_input = 8
-        if p3.button("N = 12", use_container_width=True):
+        if p3.button("N = 12", key="p1_12", use_container_width=True):
             n_input = 12
-        if p4.button("N = 16", use_container_width=True):
+        if p4.button("N = 16", key="p1_16", use_container_width=True):
             n_input = 16
 
     with col_btn:
         st.write("")
-        run_solve = st.button("🚀 Solve", type="primary", use_container_width=True)
+        run_solve = st.button("🚀 Solve Both", type="primary", use_container_width=True)
 
-    # Solve execution
     if run_solve or "cached_n" not in st.session_state or st.session_state.cached_n != n_input:
         st.session_state.cached_n = n_input
-        with st.spinner("Computing solutions..."):
-            st.session_state.bt_res = solve_backtracking(n_input, timeout=4.0, record_history=True)
-            st.session_state.hc_res = solve_hill_climbing(n_input, timeout=8.0, record_history=True)
+        with st.spinner("Solving..."):
+            st.session_state.bt_res = solve_backtracking(n_input, timeout=4.0)
+            st.session_state.hc_res = solve_hill_climbing(n_input, timeout=8.0)
 
     bt_data = st.session_state.get("bt_res")
     hc_data = st.session_state.get("hc_res")
 
     if bt_data and hc_data:
-        # Speedup pill
         if bt_data["success"] and hc_data["success"] and hc_data["runtime"] > 0:
             speedup = bt_data["runtime"] / hc_data["runtime"]
             if speedup >= 1.0:
@@ -215,7 +237,6 @@ with tab_solver:
 
         col_bt, col_hc = st.columns(2)
 
-        # Left: Backtracking
         with col_bt:
             st.markdown("### 🌲 Backtracking")
             bt_status = "SOLVED" if bt_data["success"] else "TIMED OUT"
@@ -232,7 +253,6 @@ with tab_solver:
             if bt_data["board"]:
                 render_board(bt_data["board"], n_input)
 
-        # Right: Min-Conflicts Hill Climbing
         with col_hc:
             st.markdown("### 🏔️ Hill Climbing (Min-Conflicts)")
             hc_status = "SOLVED" if hc_data["success"] else "FAILED"
@@ -250,42 +270,91 @@ with tab_solver:
             if hc_data["board"]:
                 render_board(hc_data["board"], n_input)
 
-        # Dynamic Queens Step Replay & Animation
+# =============================================================================
+# PAGE 2: DYNAMIC QUEEN PROTOTYPE (INTERACTIVE SIMULATOR)
+# =============================================================================
+with tab_prototype:
+    col_proto_cfg, col_proto_hud = st.columns([1.5, 2.5])
+
+    with col_proto_cfg:
+        proto_algo = st.selectbox(
+            "Algorithm:",
+            ["Hill Climbing (Min-Conflicts)", "Backtracking"]
+        )
+        proto_n = st.slider("Board Dimension (N):", min_value=4, max_value=16, value=8, step=1, key="proto_n")
+        proto_speed = st.select_slider("Playback Speed:", options=["Slow", "Normal", "Fast"], value="Normal")
+        delay = 0.25 if proto_speed == "Slow" else (0.08 if proto_speed == "Normal" else 0.02)
+
+        btn_gen = st.button("🔄 Generate Simulation", type="primary", use_container_width=True)
+
+    # Session cache for simulation data
+    sim_key = f"sim_{proto_algo}_{proto_n}"
+    if btn_gen or sim_key not in st.session_state:
+        with st.spinner("Generating simulation sequence..."):
+            if "Hill Climbing" in proto_algo:
+                res = solve_hill_climbing(proto_n, record_history=True, max_history_frames=200)
+            else:
+                res = solve_backtracking(proto_n, record_history=True, max_history_frames=200)
+            st.session_state[sim_key] = res.get("history", [])
+
+    history = st.session_state.get(sim_key, [])
+    total_frames = len(history)
+
+    if total_frames > 0:
+        with col_proto_hud:
+            st.markdown("#### 🎮 Simulation Player Controls")
+            c_play, c_step, c_reset = st.columns([1.2, 2.5, 1.0])
+            with c_play:
+                play_anim = st.button("▶ Play Animation", use_container_width=True)
+            with c_step:
+                curr_step = st.slider("Step Scrubber:", 0, total_frames - 1, total_frames - 1)
+            with c_reset:
+                if st.button("⏮ Reset", use_container_width=True):
+                    curr_step = 0
+
         st.markdown("---")
-        st.markdown("#### 🎬 Dynamic Queen Animation & Step Replay")
+        board_display_col, info_col = st.columns([2, 1.2])
 
-        algo_choice = st.radio("Select Algorithm for Dynamic Animation:", ["Hill Climbing (Min-Conflicts)", "Backtracking"], horizontal=True)
-        chosen_history = hc_data.get("history", []) if "Hill Climbing" in algo_choice else bt_data.get("history", [])
+        target_frame = history[curr_step]
+        board_state = target_frame["board"] if isinstance(target_frame, dict) else target_frame
+        moved_col = target_frame.get("moved_col", -1) if isinstance(target_frame, dict) else -1
+        conf_count = target_frame.get("conflicts", count_board_conflicts(board_state)) if isinstance(target_frame, dict) else count_board_conflicts(board_state)
+        action_desc = target_frame.get("desc", f"Step {curr_step + 1}") if isinstance(target_frame, dict) else f"Step {curr_step + 1}"
 
-        if chosen_history:
-            total_frames = len(chosen_history)
-            c_anim_ctrl, c_board_dyn = st.columns([1.5, 2.5])
+        with info_col:
+            st.markdown("##### 📡 Live Telemetry")
+            conf_color = "#16A34A" if conf_count == 0 else "#DC2626"
+            status_label = "GOAL REACHED (0 Conflicts)" if conf_count == 0 else f"{conf_count} Conflicts Active"
 
-            with c_anim_ctrl:
-                step_idx = st.slider("Step Index:", 0, total_frames - 1, total_frames - 1)
-                anim_speed = st.select_slider("Animation Speed:", options=["Slow", "Normal", "Fast"], value="Normal")
-                delay = 0.25 if anim_speed == "Slow" else (0.1 if anim_speed == "Normal" else 0.03)
-                play_btn = st.button("▶ Play Dynamic Animation", use_container_width=True)
+            st.markdown(f"""
+            <div class="hud-box">
+                <div style="font-size: 0.8rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Step Progress</div>
+                <div class="hud-metric">{curr_step + 1} / {total_frames}</div>
+                <div style="margin-top: 0.8rem; font-size: 0.8rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Conflict State</div>
+                <div class="hud-metric" style="color: {conf_color};">{status_label}</div>
+                <div style="margin-top: 0.8rem; font-size: 0.8rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Action Performed</div>
+                <div style="font-size: 0.95rem; font-weight: 600; color: #1E293B;">{action_desc}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-            with c_board_dyn:
-                board_placeholder = st.empty()
-                status_placeholder = st.empty()
+        with board_display_col:
+            board_holder = st.empty()
 
-                if play_btn:
-                    for i in range(total_frames):
-                        frame = chosen_history[i]
-                        conf = count_board_conflicts(frame)
-                        with board_placeholder:
-                            render_board(frame, n_input, title=f"Move {i + 1} of {total_frames} (Conflicts: {conf})")
-                        time.sleep(delay)
-                else:
-                    curr_frame = chosen_history[step_idx]
-                    conf = count_board_conflicts(curr_frame)
-                    with board_placeholder:
-                        render_board(curr_frame, n_input, title=f"Step {step_idx + 1} of {total_frames} (Conflicts: {conf})")
+            if play_anim:
+                for idx in range(total_frames):
+                    f = history[idx]
+                    b = f["board"] if isinstance(f, dict) else f
+                    m_col = f.get("moved_col", -1) if isinstance(f, dict) else -1
+                    c = f.get("conflicts", count_board_conflicts(b)) if isinstance(f, dict) else count_board_conflicts(b)
+                    with board_holder:
+                        render_board(b, proto_n, active_col=m_col, title=f"Step {idx + 1}/{total_frames} (Conflicts: {c})")
+                    time.sleep(delay)
+            else:
+                with board_holder:
+                    render_board(board_state, proto_n, active_col=moved_col, title=f"Step {curr_step + 1}/{total_frames}")
 
 # =============================================================================
-# PAGE 2: PERFORMANCE BENCHMARK
+# PAGE 3: PERFORMANCE BENCHMARK
 # =============================================================================
 with tab_benchmarks:
     c_run, c_space = st.columns([1.5, 3.5])
@@ -300,7 +369,7 @@ with tab_benchmarks:
             st.session_state.bench_records = None
 
     if run_bench_btn:
-        with st.spinner("Running automated experiments across scaling N..."):
+        with st.spinner("Running automated experiments..."):
             st.session_state.bench_records = run_benchmark(
                 n_values=DEFAULT_N_VALUES,
                 trials=3,
@@ -315,7 +384,6 @@ with tab_benchmarks:
     if records:
         df_bench = pd.DataFrame(records)
 
-        # Comparison Table
         st.markdown("#### 📋 Performance Table")
         display_df = pd.DataFrame({
             "Board N": df_bench["n"],
@@ -329,7 +397,6 @@ with tab_benchmarks:
         })
         st.dataframe(display_df, use_container_width=True)
 
-        # Visual Plots
         st.markdown("#### 📈 Benchmark Visualizations")
         p_col1, p_col2 = st.columns(2)
 
@@ -339,13 +406,12 @@ with tab_benchmarks:
 
         if os.path.exists(chart_rt) and os.path.exists(chart_sr):
             with p_col1:
-                st.image(chart_rt, caption="Runtime Scaling as N Grows (Log Scale)", use_container_width=True)
+                st.image(chart_rt, caption="Runtime Scaling (Log Scale)", use_container_width=True)
             with p_col2:
-                st.image(chart_sr, caption="Success Rate & Hill Climbing Restarts", use_container_width=True)
+                st.image(chart_sr, caption="Success Rate & Restarts", use_container_width=True)
         elif os.path.exists(chart_combined):
             st.image(chart_combined, use_container_width=True)
 
-        # Download CSV
         with open("output/benchmark_results.csv", "rb") as f:
             st.download_button(
                 label="📥 Download Benchmark Results (CSV)",

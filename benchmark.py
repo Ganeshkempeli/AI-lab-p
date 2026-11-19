@@ -11,7 +11,28 @@ import csv
 import json
 import os
 from typing import List, Dict, Any
-from tabulate import tabulate
+try:
+    from tabulate import tabulate
+except ImportError:
+    def tabulate(rows, headers=None, tablefmt=None):
+        """Zero-dependency fallback table formatter."""
+        if not rows:
+            return ""
+        header_strs = [str(h) for h in headers] if headers else []
+        row_strs = [[str(cell) for cell in r] for r in rows]
+        all_lines = ([header_strs] if header_strs else []) + row_strs
+        widths = [max(len(all_lines[r][c]) for r in range(len(all_lines))) for c in range(len(all_lines[0]))]
+
+        output_lines = []
+        if header_strs:
+            h_line = "| " + " | ".join(h.ljust(widths[i]) for i, h in enumerate(header_strs)) + " |"
+            sep = "|-" + "-|-".join("-" * widths[i] for i in range(len(header_strs))) + "-|"
+            output_lines.extend([h_line, sep])
+
+        for r in row_strs:
+            output_lines.append("| " + " | ".join(r[i].ljust(widths[i]) for i in range(len(r))) + " |")
+
+        return "\n".join(output_lines)
 
 from backtracking import solve_backtracking
 from hill_climbing import solve_hill_climbing

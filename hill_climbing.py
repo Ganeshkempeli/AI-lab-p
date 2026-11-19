@@ -16,8 +16,9 @@ def count_board_conflicts(board: List[int]) -> int:
     conflicts = 0
     for i in range(n):
         for j in range(i + 1, n):
-            if board[i] == board[j] or abs(board[i] - board[j]) == abs(i - j):
-                conflicts += 1
+            if board[i] != -1 and board[j] != -1:
+                if board[i] == board[j] or abs(board[i] - board[j]) == abs(i - j):
+                    conflicts += 1
     return conflicts
 
 
@@ -27,7 +28,7 @@ def solve_hill_climbing(
     max_steps_per_restart: Optional[int] = None,
     timeout: float = 10.0,
     record_history: bool = False,
-    max_history_frames: int = 150
+    max_history_frames: int = 200
 ) -> Dict[str, Any]:
     """
     Solve N-Queens using Min-Conflicts Hill Climbing with Random Restarts.
@@ -55,8 +56,18 @@ def solve_hill_climbing(
 
         # Random complete initialization
         queens = [random.randint(0, n - 1) for _ in range(n)]
+        init_conf = count_board_conflicts(queens)
+
         if record_history and len(history) < max_history_frames:
-            history.append(list(queens))
+            history.append({
+                "board": list(queens),
+                "moved_col": -1,
+                "from_row": -1,
+                "to_row": -1,
+                "conflicts": init_conf,
+                "step": 0,
+                "desc": "Initial Random Placement"
+            })
 
         # Frequency tables for O(1) conflict updates
         row_count = [0] * n
@@ -101,8 +112,16 @@ def solve_hill_climbing(
 
             if not conflicted_cols:
                 elapsed = time.perf_counter() - start_time
-                if record_history and (not history or history[-1] != queens):
-                    history.append(list(queens))
+                if record_history and (not history or history[-1]["board"] != queens):
+                    history.append({
+                        "board": list(queens),
+                        "moved_col": -1,
+                        "from_row": -1,
+                        "to_row": -1,
+                        "conflicts": 0,
+                        "step": total_steps,
+                        "desc": "Goal State Reached (0 Conflicts)"
+                    })
                 return {
                     "success": True,
                     "board": list(queens),
@@ -140,7 +159,15 @@ def solve_hill_climbing(
                 d2_count[next_r + c] += 1
 
                 if record_history and len(history) < max_history_frames:
-                    history.append(list(queens))
+                    history.append({
+                        "board": list(queens),
+                        "moved_col": c,
+                        "from_row": curr_r,
+                        "to_row": next_r,
+                        "conflicts": count_board_conflicts(queens),
+                        "step": total_steps,
+                        "desc": f"Moved Col {c}: Row {curr_r} -> Row {next_r}"
+                    })
 
         restarts += 1
 
