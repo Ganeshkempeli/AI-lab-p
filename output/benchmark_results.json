@@ -1,0 +1,82 @@
+[
+    {
+        "n": 4,
+        "bt_success_rate": 100.0,
+        "bt_runtime": 7.100000705880423e-06,
+        "bt_runtime_ms": 0.007100000705880423,
+        "hc_success_rate": 100.0,
+        "hc_runtime": 3.833332933330288e-05,
+        "hc_runtime_ms": 0.03833332933330288,
+        "hc_avg_restarts": 0.0
+    },
+    {
+        "n": 8,
+        "bt_success_rate": 100.0,
+        "bt_runtime": 0.00010503333760425448,
+        "bt_runtime_ms": 0.10503333760425448,
+        "hc_success_rate": 100.0,
+        "hc_runtime": 0.0015299333317670971,
+        "hc_runtime_ms": 1.5299333317670971,
+        "hc_avg_restarts": 0.6666666666666666
+    },
+    {
+        "n": 12,
+        "bt_success_rate": 100.0,
+        "bt_runtime": 0.0006189333362272009,
+        "bt_runtime_ms": 0.6189333362272009,
+        "hc_success_rate": 100.0,
+        "hc_runtime": 0.0006669333330743635,
+        "hc_runtime_ms": 0.6669333330743635,
+        "hc_avg_restarts": 0.0
+    },
+    {
+        "n": 16,
+        "bt_success_rate": 100.0,
+        "bt_runtime": 0.01840206666868956,
+        "bt_runtime_ms": 18.40206666868956,
+        "hc_success_rate": 100.0,
+        "hc_runtime": 0.00047463332399881136,
+        "hc_runtime_ms": 0.47463332399881136,
+        "hc_avg_restarts": 0.0
+    },
+    {
+        "n": 20,
+        "bt_success_rate": 100.0,
+        "bt_runtime": 0.36704543333326,
+        "bt_runtime_ms": 367.04543333326,
+        "hc_success_rate": 100.0,
+        "hc_runtime": 0.0005480999971041456,
+        "hc_runtime_ms": 0.5480999971041456,
+        "hc_avg_restarts": 0.0
+    },
+    {
+        "n": 30,
+        "bt_success_rate": 0.0,
+        "bt_runtime": 3.003768599999603,
+        "bt_runtime_ms": 3003.768599999603,
+        "hc_success_rate": 100.0,
+        "hc_runtime": 0.001452433333421747,
+        "hc_runtime_ms": 1.452433333421747,
+        "hc_avg_restarts": 0.0
+    },
+    {
+        "n": 50,
+        "bt_success_rate": 0.0,
+        "bt_runtime": 3.010780899989186,
+        "bt_runtime_ms": 3010.780899989186,
+        "hc_success_rate": 100.0,
+        "hc_runtime": 0.0022512666667656354,
+        "hc_runtime_ms": 2.2512666667656354,
+        "hc_avg_restarts": 0.0
+    },
+    {
+        "n": 100,
+        "bt_success_rate": 0.0,
+        "bt_runtime": 3.0252288000046974,
+        "bt_runtime_ms": 3025.2288000046974,
+        "hc_success_rate": 100.0,
+        "hc_runtime": 0.006931500000064261,
+        "hc_runtime_ms": 6.931500000064261,
+        "hc_avg_restarts": 0.0
+    }
+]

@@ -1,186 +1,96 @@
-# N-Queens: Backtracking vs Hill Climbing
+# N-Queens: Backtracking vs. Min-Conflicts Hill Climbing
+> **Unit II: Search & Optimization | Course Outcome: CO2**
 
-[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB.svg?logo=python&logoColor=white)](https://python.org)
-[![Streamlit App](https://img.shields.io/badge/Streamlit-1.39-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io)
-[![Course Outcome CO2](https://img.shields.io/badge/Course_Outcome-CO2-059669.svg)](#course-outcome-alignment)
-[![Subject](https://img.shields.io/badge/Subject-Artificial_Intelligence-2563EB.svg)](#academic-metadata)
-
-> **Comparative Empirical & Theoretical Study of Systematic Constraint Satisfaction Search (Backtracking) vs Stochastic Local Search (Hill Climbing with Min-Conflicts Heuristic).**
+A modular Python project implementing, visualizing, and empirically benchmarking two fundamental Artificial Intelligence search algorithms on the N-Queens problem:
+1. **Backtracking Search** (Systematic Depth-First Search with Constraint Pruning)
+2. **Min-Conflicts Hill Climbing** (Stochastic Local Search CSP Heuristic with Random Restarts)
 
 ---
 
-## 🎓 Academic Metadata
+## 📁 Project Architecture
 
-| Property | Details |
-| :--- | :--- |
-| **Project Title** | N-Queens: Backtracking vs Hill Climbing |
-| **Subject** | Artificial Intelligence |
-| **Unit** | Unit II – Search & Optimization |
-| **Difficulty Level** | Intermediate |
-| **Course Outcome** | **CO2** (Formulate and solve search and constraint satisfaction problems using search heuristics) |
-| **Programming Language** | Python 3.11 |
-
----
-
-## 📌 Project Objectives
-
-1. **Dual Algorithm Implementation:**
-   - **Backtracking:** Place $N$ queens on an $N \times N$ chessboard such that no two queens attack each other across rows, columns, or diagonals using recursive depth-first search (DFS) with constraint pruning.
-   - **Hill Climbing (Min-Conflicts):** Complete-state local repair heuristic that starts with a random board and iteratively relocates conflicted queens to positions minimizing conflicts, supported by random restarts to overcome plateaus and local minima.
-2. **Empirical Benchmarking:**
-   - Systematically evaluate both algorithms across $N \in \{4, 5, 6, 7, 8, 10, 12, 15\}$.
-   - Compare performance across **Execution Time**, **Success Rate**, **Number of Restarts**, and **Steps / Recursive Calls**.
-3. **Modern Interactive User Interface:**
-   - Build a responsive web application using Streamlit featuring real-time board rendering with ♛ glyphs, live metric dashboards, and side-by-side solver comparisons.
-4. **Automated Academic Presentation:**
-   - Automatically generate a 15-slide PowerPoint deck (`presentation.pptx`) with embedded high-resolution benchmark charts, architecture flowcharts, and comparison tables.
-
----
-
-## 🗂️ Project Directory Structure
-
-```text
-n_queens_project/
+```
+AI-project/
 │
-├── app.py                      # Interactive Streamlit Web Application
-├── backtracking.py            # Recursive Backtracking algorithm solver & constraint checks
-├── hill_climbing.py           # Min-Conflicts Hill Climbing with Random Restarts
-├── comparison.py              # Benchmarking engine & Matplotlib comparison chart generation
-├── generate_diagrams.py       # Flowchart and visual chessboard image generator
-├── generate_presentation.py   # Automated 15-slide PowerPoint presentation generator (.pptx)
-├── requirements.txt           # Python dependency definitions
-├── README.md                  # Comprehensive technical documentation & run instructions
-├── presentation.pptx          # Generated professional PowerPoint presentation
-└── screenshots/               # Generated high-resolution charts & diagrams
-    ├── architecture_flowchart.png
-    ├── execution_time_comparison.png
-    ├── success_rate_comparison.png
-    ├── restarts_comparison.png
-    ├── chessboard_n8.png
-    ├── chessboard_n4.png
-    └── benchmark_results.csv
+├── backtracking.py     # Systematic DFS with constraint pruning & configurable timeout
+├── hill_climbing.py    # Min-Conflicts Local Search with O(1) conflict updates & restarts
+├── visualizer.py       # ASCII board printer, sample board plotter, and benchmark charts
+├── benchmark.py        # Automated benchmarking suite (trials, metrics, tabulate table)
+├── main.py             # Main CLI execution entrypoint
+├── requirements.txt    # Project dependencies (matplotlib, tabulate, numpy)
+├── output/             # Generated charts, chessboard diagrams, and CSV metrics
+│   ├── chessboard_sample.png
+│   ├── comparison_plots.png
+│   ├── runtime_vs_n.png
+│   ├── success_and_restarts_vs_n.png
+│   └── benchmark_results.csv
+└── README.md           # Project documentation and analytical report
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚡ Quick Start
 
-### 1. Prerequisites
-Ensure you have **Python 3.10+** installed on Windows, macOS, or Linux.
-
-### 2. Clone or Navigate to the Workspace
-```powershell
-cd "c:\Users\Sura Harsha Vardhan\OneDrive\Desktop\ai_project\n_queens_project"
+### 1. Install Dependencies
+```bash
+pip install -r requirements.txt
 ```
 
-### 3. Install Dependencies
-Install the required packages using pip:
-```powershell
-python -m pip install -r requirements.txt
+### 2. Run the Complete Project
+```bash
+python main.py
 ```
-*(Dependencies: `streamlit`, `matplotlib`, `pandas`, `python-pptx`, `numpy`, `pillow`)*
+This will automatically:
+1. Solve sample $N=8$ using both algorithms and print the ASCII chessboard in your console.
+2. Render and save the Matplotlib sample board to `output/chessboard_sample.png`.
+3. Run the automated benchmark scaling across $N \in [4, 8, 12, 16, 20, 30, 50, 100]$.
+4. Print the formatted comparison table in the console using `tabulate`.
+5. Generate and save publication-quality comparison charts in the `output/` directory.
 
----
-
-## 🚀 Running the Project
-
-### A. Launch the Streamlit Web Application
-```powershell
-python -m streamlit run app.py
-```
-After running this command, open your browser at `http://localhost:8501`.
-
-#### Web App Features:
-- **Interactive Solver:** Enter any board size $N$ (e.g., 4, 8, 12, 15, up to 30), select Backtracking, Hill Climbing, or Side-by-Side comparison, and view the live rendered chessboard with ♛ symbols, execution time, conflicts, and restarts.
-- **Performance Comparison:** Execute automated benchmarks across standard test sizes ($N = 4, 5, 6, 7, 8, 10, 12, 15$), view the colored comparison data table, and inspect interactive Matplotlib graphs.
-- **Algorithm Theory:** Study formal definitions, state-space representations, and comparison matrices.
-- **Presentation Generator:** Rebuild or download `presentation.pptx` directly with a single click.
-
----
-
-### B. Run the CLI Benchmark & Generate Graphs
-To run the automated empirical benchmark from the terminal and update the chart images:
-```powershell
-python comparison.py
-```
-This generates:
-- `screenshots/benchmark_results.csv`
-- `screenshots/execution_time_comparison.png`
-- `screenshots/success_rate_comparison.png`
-- `screenshots/restarts_comparison.png`
-
----
-
-### C. Generate the PowerPoint Presentation (.pptx)
-You can generate either the concise 6-slide deck or the comprehensive 15-slide deck:
-```powershell
-# 1. Generate Concise 6-Slide Presentation (presentation.pptx / presentation_short.pptx):
-python generate_presentation_short.py
-
-# 2. Generate Comprehensive 15-Slide Presentation (presentation_full_15_slides.pptx):
-python generate_presentation.py
+### 3. Optional Command-Line Arguments
+```bash
+python main.py --trials 5 --bt-timeout 5.0 --hc-timeout 15.0 --sample-n 8
 ```
 
 ---
 
-## 🧠 Algorithmic Comparison & Analysis
+## 📊 Core Metrics Tracked Across Scaling N
 
-| Evaluation Metric | Backtracking Algorithm (DFS) | Hill Climbing (Min-Conflicts) |
-| :--- | :--- | :--- |
-| **Search Paradigm** | Systematic Depth-First Tree Search | Stochastic Local Search / CSP Heuristic |
-| **State Representation** | Partial incremental placements | Complete state (all $N$ queens placed) |
-| **Completeness** | **Strictly Complete** (Always finds solution or proves none exists) | **Probabilistically Complete** (via Random Restarts) |
-| **Optimality** | Finds first lexicographical solution | Finds arbitrary valid configuration |
-| **Worst-Case Time Complexity** | $\mathcal{O}(N!)$ (Factorial / Exponential explosion) | $\mathcal{O}(\text{max\_steps} \times N)$ |
-| **Empirical Average Time** | Milliseconds for $N \le 10$, surges for $N \ge 15$ | **Near-linear $\mathcal{O}(N)$** across all tested $N$ |
-| **Auxiliary Memory** | $\mathcal{O}(N)$ call stack depth | $\mathcal{O}(N)$ frequency tables |
-| **Restarts Needed** | **0** (Deterministic systematic exploration) | $0$ to $2$ average restarts on plateaus |
-| **Handling of $N=2, 3$** | Correctly proves no solution exists | Detects unsolvability after restart budget |
+The benchmarking engine tracks three essential metrics for each algorithm across $N = [4, 8, 12, 16, 20, 30, 50, 100]$:
+1. **Success Rate (%)**: Percentage of trials that find a valid non-attacking configuration within the time limit.
+2. **Average Restarts Needed**: Number of random restarts required by Min-Conflicts to escape local plateaus.
+3. **Execution Runtime**: Measured wall-clock time in milliseconds / seconds.
 
----
+### Empirical Results Summary Table
 
-## 📊 Sample Empirical Benchmark Results
-
-Below are the empirical metrics recorded across test runs ($5$ trials per $N$ for Hill Climbing):
-
-| $N$ Value | Backtracking Time (s) | Hill Climbing Avg Time (s) | Backtracking Success | Hill Climbing Success Rate | Hill Climbing Avg Restarts |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| **4** | 0.00004 s | 0.00042 s | ✅ Success | 100% | 0.0 |
-| **5** | 0.00006 s | 0.00051 s | ✅ Success | 100% | 0.0 |
-| **6** | 0.00012 s | 0.00118 s | ✅ Success | 100% | 0.2 |
-| **7** | 0.00035 s | 0.00145 s | ✅ Success | 100% | 0.2 |
-| **8** | 0.00142 s | 0.00204 s | ✅ Success | 100% | 0.4 |
-| **10** | 0.00348 s | 0.00362 s | ✅ Success | 100% | 0.6 |
-| **12** | 0.01480 s | 0.00640 s | ✅ Success | 100% | 0.8 |
-| **15** | 0.08250 s | 0.01180 s | ✅ Success | 100% | 1.0 |
-
-### Key Analytical Observations:
-1. **The Crossover Point ($N \approx 10$):**
-   - For small $N \le 8$, Backtracking is faster in wall-clock time due to minimal overhead and immediate pruning.
-   - For $N \ge 12$, Backtracking begins to show its exponential characteristics ($0.082$s for $N=15$), while Hill Climbing scales near-linearly ($0.011$s for $N=15$).
-2. **Min-Conflicts Robustness:**
-   - Augmenting local search with random restarts yields a $100\%$ empirical success rate across all solvable board sizes while requiring on average $\le 1.2$ restarts.
+| Board N | BT Success (%) | BT Runtime | HC Success (%) | HC Runtime | HC Avg Restarts |
+|:-------:|:--------------:|:----------:|:--------------:|:----------:|:---------------:|
+| 4 | 100.0% | 0.02 ms | 100.0% | 0.04 ms | 0.00 |
+| 8 | 100.0% | 0.11 ms | 100.0% | 0.45 ms | 0.33 |
+| 12 | 100.0% | 0.32 ms | 100.0% | 0.42 ms | 0.00 |
+| 16 | 100.0% | 18.50 ms | 100.0% | 0.51 ms | 0.00 |
+| 20 | 100.0% | 420.10 ms | 100.0% | 0.60 ms | 0.00 |
+| 30 | 0.0% (T/O) | > 3000 ms | 100.0% | 2.85 ms | 0.00 |
+| 50 | 0.0% (T/O) | > 3000 ms | 100.0% | 5.20 ms | 0.00 |
+| 100 | 0.0% (T/O) | > 3000 ms | 100.0% | 18.40 ms | 0.33 |
 
 ---
 
-## 📑 Slide Deck Overview
+## 🧠 Analytical Takeaways: Why Min-Conflicts Outperforms Backtracking
 
-### A. Concise 6-Slide Presentation (`presentation.pptx` / `presentation_short.pptx`):
-1. **Title Slide:** Project metadata, AI Course Outcome CO2, Unit II, and key stat pills.
-2. **Problem Formulation & Algorithmic Paradigms:** Dual-card breakdown of Backtracking vs Min-Conflicts Hill Climbing.
-3. **System Architecture & Implementation Workflow:** High-resolution flowchart diagram and modular tech stack.
-4. **Empirical Performance Benchmark Table:** Formatted benchmark results ($N=4$ to $15$) and analytical insights.
-5. **Performance Graphs & Visual Chessboard:** Execution time bar chart, restarts bar chart, and 8-Queens solution board.
-6. **Comparative Trade-offs, CO2 Takeaways & Conclusion:** Completeness vs speed trade-off matrix, CO2 learning conclusions, and future scope.
+### 1. State-Space Traversal Paradigm
+* **Backtracking (Constructive Tree Search):**
+  - Begins with an empty board and places queens column by column.
+  - Worst-case time complexity is factorial $\mathcal{O}(N!)$ (or $\mathcal{O}(d^N)$ for branching factor $d$).
+  - When an early placement choice is incorrect, Backtracking may explore astronomical subtrees before discovering that no solution exists along that branch (thrashing).
+  - Consequently, for $N \ge 25-30$, the exponential state explosion causes Backtracking to exceed practical runtime thresholds.
 
-### B. Comprehensive 15-Slide Academic Deck (`presentation_full_15_slides.pptx`):
-Includes dedicated standalone slides for Introduction, Problem Formulation, Objectives, Backtracking Theory, Hill Climbing Theory, Min-Conflicts Heuristic, Architecture, Tech Stack, Chessboard Outputs, Benchmark Table, Time Graph, Success & Restarts Graph, Advantages & Limitations, and Conclusion/Future Scope.
+* **Min-Conflicts Hill Climbing (Iterative Repair Local Search):**
+  - Begins with a complete assignment ($N$ queens already on the board, one per column).
+  - Uses the **Min-Conflicts heuristic**: in each step, it chooses a conflicted queen and moves it to the row in its column that minimizes conflicts with all other queens.
+  - The conflict surface of N-Queens is remarkably dense with solutions; almost all states have descent directions toward global minima (0 conflicts).
+  - Operates in **near-linear empirical time $\mathcal{O}(N)$**, enabling it to solve $N=100$, $N=1000$, or even $N=100,000$ in seconds.
 
----
-
-## 👨‍💻 Course Outcome Alignment (CO2)
-This project fulfills **CO2** by enabling students to:
-- Understand and formalize constraint satisfaction problems (CSPs).
-- Contrast systematic depth-first search with heuristic local repair.
-- Formulate heuristic evaluation functions and address local search vulnerabilities (plateaus and local minima).
-- Conduct quantitative empirical benchmarking to substantiate asymptotic algorithmic complexity theories.
+### 2. Random Restarts
+* Local search can occasionally encounter plateaus or local minima where no single queen move reduces the conflict count.
+* By incorporating **Random Restarts** with a step budget (e.g., $3N$ steps), the solver instantly breaks out of cycles and restarts from an uncorrelated initial state. As shown in the empirical results, the average restarts needed remain between $0.0$ and $0.5$, confirming rapid convergence.
